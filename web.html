@@ -1,0 +1,185 @@
+<?php
+  include('session.php');
+  Session::checkLogin();
+  //Session::checkSession();
+  Session::init();
+?>
+<!DOCTYPE html>
+<html lang="en">
+     <head>
+     <title>Gallery</title>
+     <meta charset="utf-8">
+     <meta name = "format-detection" content = "telephone=no" />
+	 <link href="css/bootstrap.min.css" rel="stylesheet">
+     <link href="css/fontawesome.min.css" rel="stylesheet">
+     <link rel="stylesheet" href="css/touchTouch.css">
+     <link rel="stylesheet" href="css/style.css">
+     <link rel="stylesheet" href="css/mystyle.css">
+     <script src="js/jquery.js"></script>
+     <script src="js/superfish.js"></script>
+     <script src="js/touchTouch.jquery.js"></script>
+	 <script src="js/bootstrap.min.js"></script>
+
+     <script>
+       $(document).ready(function(){
+        $('.gallery a.gal').touchTouch();
+        $().UItoTop({ easingType: 'easeOutQuart' });
+        $('.tooltip').tooltipster();
+        });
+     </script>
+
+     </head>
+
+<body>
+
+	<section id="nav-part">
+	   <div class="container">
+		  <nav class="navbar navbar-expand-lg navbar-black bg-black">
+		   <a class="navbar-brand" href="#">
+			   <div class="logo">
+				  <img src="images/logo.png"/>
+			   </div>
+		  </a>
+		  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		  </button>
+
+		  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+			<ul class="navbar-nav ml-auto">
+
+			  <li class="nav-item">
+				<a class="nav-link" href="#">home</a>
+			  </li>
+			  <li class="nav-item">
+				<a class="nav-link" href="#">about us</a>
+			  </li>
+			  <li class="nav-item">
+				<a class="nav-link" href="#">photo gallery</a>
+			  </li>
+			  <li class="nav-item">
+				<a class="nav-link" href="#">contact us</a>
+			  </li>
+			  <li class="nav-item">
+				<a class="nav-link" href="profile.php?phone=<?php echo Session::get('phone');?>" target="_blank">profile</a>
+			  </li>
+			  <li class="nav-item">
+				<a class="nav-link" href="#" data-toggle="modal" data-target="#exampleModal">Admin</a>
+			  </li>
+			  <li class="nav-item">
+				<a class="nav-link" href="logout.php">log out</a>
+			  </li>
+			</ul>
+		  </div>
+		</nav>
+	   </div>
+	</section>
+	<section id="buy_flat">
+		<div class="container">
+			<div class="contact-para text-center">
+			   <h3>Flat Image</h3>
+			</div>
+			<div class="row">
+				<div class="col-md-4">
+					<div class="flat_img">
+						<img src="images/front1.jpg">
+					</div>
+					<div class="flat_name text-center">
+						<h5>Land area : 1000 Sq. Feet</h5>
+						<h5>Unit price :BDT 60,00000</h5>
+						<a href="buy.php" target="_blank" type="submit" class="btn btn-success">BUY</a>
+					</div>
+				</div>
+				<div class="col-md-4">
+					<div class="flat_img">
+						<img src="images/front2.jpg">
+					</div>
+					<div class="flat_name text-center">
+						<h5>Land area : 1200 Sq. Feet</h5>
+						<h5>Unit price :BDT 72,00000</h5>
+						<a href="buy.php" target="_blank" type="submit" class="btn btn-success">BUY</a>
+					</div>
+				</div>
+				<div class="col-md-4">
+					<div class="flat_img">
+						<img src="images/front3.jpg">
+					</div>
+					<div class="flat_name text-center">
+						<h5>Land area : 1400 Sq. Feet</h5>
+						<h5>Unit price :BDT 84,00000</h5>
+						<a href="buy.php" target="_blank" type="submit" class="btn btn-success">BUY</a>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-4">
+					<div class="flat_img">
+						<img src="images/front1.jpg">
+					</div>
+					<div class="flat_name text-center">
+						<h5>Land area : 1000 Sq. Feet</h5>
+						<h5>Unit price :BDT 60,00000</h5>
+						<a href="buy.php" target="_blank" type="submit" class="btn btn-success">BUY</a>
+					</div>
+				</div>
+				<div class="col-md-4">
+					<div class="flat_img">
+						<img src="images/front2.jpg">
+					</div>
+					<div class="flat_name text-center">
+						<h5>Land area : 1200 Sq. Feet</h5>
+						<h5>Unit price :BDT 72,00000</h5>
+						<a href="buy.php" target="_blank" type="submit" class="btn btn-success">BUY</a>
+					</div>
+				</div>
+				<div class="col-md-4">
+					<div class="flat_img">
+						<img src="images/front3.jpg">
+					</div>
+					<div class="flat_name text-center">
+						<h5>Land area : 1400 Sq. Feet</h5>
+						<h5>Unit price :BDT 84,00000</h5>
+						<a href="buy.php" target="_blank" type="submit" class="btn btn-success">BUY</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+<!--==============================Content=================================-->
+  <div class="container">
+    <div class="grid_12">
+      <h2>Gallery</h2>
+    </div>
+    <div class="clear"></div>
+    <div class="gallery">
+      <div class="grid_4"><a href="images/big1.jpg" class="gal"><img src="images/page3_img1.jpg" alt=""></a></div>
+      <div class="grid_4"><a href="images/big2.jpg" class="gal"><img src="images/page3_img2.jpg" alt=""></a></div>
+      <div class="grid_4"><a href="images/big3.jpg" class="gal"><img src="images/page3_img3.jpg" alt=""></a></div>
+      <div class="clear"></div>
+      <div class="grid_4"><a href="images/big4.jpg" class="gal"><img src="images/page3_img4.jpg" alt=""></a></div>
+      <div class="grid_4"><a href="images/big5.jpg" class="gal"><img src="images/page3_img5.jpg" alt=""></a></div>
+      <div class="grid_4"><a href="images/big6.jpg" class="gal"><img src="images/page3_img6.jpg" alt=""></a></div>
+    </div>
+  </div>
+
+  <section id="footer">
+			<div class="container">
+				<div class="row">
+					<div class="col-md-8">
+						<div class="footer-text text-right">
+							<p>Copyright © 2018 Designn By; Joyshree Mazumder.</p>
+						</div>
+					</div>
+					<div class="col-md-4">
+						<div class="footer-icon pull-right">
+							<i class="fa fa-facebook"></i>
+							<i class="fa fa-twitter"></i>
+							<i class="fa fa-linkedin"></i>
+							<i class="fa fa-google-plus"></i>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+</body>
+</html>

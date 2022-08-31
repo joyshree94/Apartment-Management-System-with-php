@@ -1,0 +1,668 @@
+<?php
+     include_once 'session.php';
+    include 'database.php';
+class User{
+	private $db;
+
+	public function __construct(){
+
+		$this->db=new Database();
+
+}
+ public function emailcheck($email){
+	   $sql_qu="select email from flat_customer where email= :email";
+		 $query = $this->db->pdo->prepare($sql_qu);
+		 $query->bindValue(':email',$email);
+         $query->execute();
+		 if($query->rowcount() >0){
+			 return true;
+		 }
+		 else{
+			return false;
+		 }
+	 }
+
+public function phonecheck($phone){
+		 $sql_qu="select phone from flat_customer where phone= :phone";
+		 $query = $this->db->pdo->prepare($sql_qu);
+		 $query->bindValue(':phone',$phone);
+         $query->execute();
+		 if($query->rowcount() >0){
+			 return true;
+		 }
+		 else{
+			return false;
+		 }
+	 }
+   public function phonecheck_accepted_customer($phone){
+   		 $sql_qu="select phone from accepted_customer where phone= :phone";
+   		 $query = $this->db->pdo->prepare($sql_qu);
+   		 $query->bindValue(':phone',$phone);
+            $query->execute();
+   		 if($query->rowcount() >0){
+   			 return true;
+   		 }
+   		 else{
+   			return false;
+   		 }
+   	 }
+public function userRegistration($date){
+
+	   $name=$date['name'];
+	   $password=$date['password'];
+	   $Age=$date['Age'];
+	   $phone=$date['phone'];
+	   $gender=$date['Gender'];
+	   $email=$date['email'];
+	   $date=$date['Date'];
+	   $month='No';
+	   $permission='No';
+	   $flat_name='No';
+
+	    $email_check=$this->emailcheck($email);
+	   $phone_check=$this->phonecheck($phone);
+
+	
+	 if($phone_check==true){
+		 $msg="<div class='alert alert-danger'><strong>Error!</strong> This phone number already exist. </div>";
+		 return $msg;
+	 }
+	  if($email_check==true){
+		  $msg="<div class='alert alert-danger'><strong>Error! </strong> This email already exist. </div>";
+		 return $msg;
+	 }
+
+
+
+	$qur="INSERT INTO flat_customer (username,password,Age,phone,Gender,email,Date,Month,Permission, flat_name )
+VALUES (:username,:password,:Age,:phone,:Gender,:email,:Date,:Month,:Permission,:flat_name )";
+         $query = $this->db->pdo->PREPARE($qur);
+		 $query->bindValue(':username',$name);
+		 $query->bindValue(':password',$password);
+		 $query->bindValue(':Age',$Age);
+		 $query->bindValue(':phone',$phone);
+		 $query->bindValue(':Gender',$gender);
+		 $query->bindValue(':email',$email);
+		 $query->bindValue(':Date',$date);
+		 $query->bindValue(':Month',$month);
+		 $query->bindValue(':Permission',$permission);
+		 $query->bindValue(':flat_name',$flat_name);
+         $result=$query->execute();
+		if($result==true){
+			 $msg="<div class='alert alert-success'><strong>Your registration is successfull</strong></div>";
+
+		 return $msg;
+		 }
+		 else{
+			 $msg="<div class='alert alert-danger'><strong>Sorry! </strong> This is not possible</div>";
+		 return $msg;
+		 }
+
+}
+public function addBuyingRequest($date){
+
+	   $name=$date['name'];
+	   $phone=$date['phone'];
+	   $flat_name=$date['flat_name'];
+	   $payment_type=$date['payment_type'];
+	   $account_name=$date['account_name'];
+	   $account_number=$date['account_number'];
+       $slip_number=$date['slip_number'];
+	     $bank=$date['bank_name'];
+       $amount=$date['amount'];
+	    $Branch=$date['branch_name'];
+	   $date=$date['date'];
+      
+     
+	   
+       // $phone_check=$this->phonecheck($phone);
+	 //if($phone_check==false){
+		// $msg="<div class='alert alert-danger'><strong>Error!</strong> This phone number is not  exist. </div>";
+		 //return $msg;
+	 //}
+
+
+	$qur="INSERT INTO buying_request (date,name,phone,payment_type,flat_name,account_name,account_number,slip_number,bank, amount,permission,Branch)
+VALUES (:date,:name,:phone,:payment_type,:flat_name,:account_name,:account_number,:slip_number,:bank,:amount,:permission,:Branch)";
+         $query = $this->db->pdo->PREPARE($qur);
+		 $query->bindValue(':date',$date);
+		 $query->bindValue(':name',$name);
+		 $query->bindValue(':phone',$phone);
+		 $query->bindValue(':payment_type',$payment_type);
+		 $query->bindValue(':flat_name',$flat_name);
+		 $query->bindValue(':account_name',$account_name);
+		 $query->bindValue(':account_number',$account_number);
+		 $query->bindValue(':slip_number',$slip_number);
+     $query->bindValue(':bank',$bank);
+		 $query->bindValue(':amount',$amount);
+		 $query->bindValue(':permission',"No");
+		 $query->bindValue(':Branch',$Branch);
+         $result=$query->execute();
+		if($result==true){
+			// $msg="<div class='alert alert-success'><strong>Your request for buying the flat is processing...</strong></div>";
+			$qur="INSERT INTO payment_info (phone,account_name,account_number,slip_number,bank,amount,date,Branch)
+VALUES (:phone,:account_name,:account_number,:slip_number,:bank,:amount,:date,:Branch )";
+         $query = $this->db->pdo->PREPARE($qur);
+		 $query->bindValue(':phone',$phone);
+		 $query->bindValue(':account_name',$account_name);
+		 $query->bindValue(':account_number',$account_number);
+		 $query->bindValue(':slip_number',$slip_number);
+     $query->bindValue(':bank',$bank);
+		 $query->bindValue(':amount',$amount);
+     $query->bindValue(':date',$date);
+     $query->bindValue(':Branch',$Branch);
+
+         $result=$query->execute();
+          if($result==true){
+			   		$qur="UPDATE flat_customer SET
+		       Month = :Month,
+		       flat_name = :flat_name,
+		       Permission =:Permission
+        WHERE
+		phone = :phone";
+         $query = $this->db->pdo->PREPARE($qur);
+		 $query->bindValue(':Month',$payment_type);
+		 $query->bindValue(':flat_name',$flat_name);
+		 $query->bindValue(':Permission','No');
+		 $query->bindValue(':phone',$phone);
+
+         $result1=$query->execute();
+		 		if($result1==true){
+			      $msg="<div class='alert alert-success'><strong>Your request for buying the flat is processing...</strong></div>";
+				}
+			//  $msg="<div class='alert alert-success'><strong>Your request for buying the flat is processing...</strong></div>";
+		 //return $msg;
+		  }
+		 }
+		 else{
+			 $msg="<div class='alert alert-danger'><strong>Sorry! </strong> This is not possible</div>";
+		 return $msg;
+		 }
+
+}
+
+public function addPayment($date){
+
+    Session::init();
+	   $account_name=$date['account_name'];
+	   $account_number=$date['account_number'];
+     $slip_number=$date['slip_number'];
+     $amount=$date['amount'];
+	   $date=$date['date'];
+     $phone = Session::get('phone');
+
+
+	$qur="INSERT INTO payment_info (phone,account_name,account_number,slip_number,bank, amount,date )
+VALUES (:phone,:account_name,:account_number,:slip_number,:bank,:amount,:date )";
+         $query = $this->db->pdo->PREPARE($qur);
+		 $query->bindValue(':phone',$phone);
+		 $query->bindValue(':account_name',$account_name);
+		 $query->bindValue(':account_number',$account_number);
+		 $query->bindValue(':slip_number',$slip_number);
+     $query->bindValue(':bank',"");
+		 $query->bindValue(':amount',$amount);
+     $query->bindValue(':date',$date);
+
+         $result=$query->execute();
+		if($result==true){
+			 $msg="<div class='alert alert-success'><strong>Your payment has been received successfully.</strong></div>";
+
+		 return $msg;
+     header('Location:profile.php');
+		 }
+		 else{
+			 $msg="<div class='alert alert-danger'><strong>Sorry! </strong> This is not possible</div>";
+		 return $msg;
+		 }
+
+}
+
+
+	  public function userlogin($date){
+		   $password=$date['password'];
+		   $email=$date['email'];
+		 // $email_check=$this->emailcheck($email);
+
+	   if( $password=='' || $email==''){
+		 $msg="<div class='alert alert-danger'><strong>Error! </strong> Feild must not be empty</div>";
+		 return $msg;
+       }
+			if(filter_var($email,FILTER_VALIDATE_EMAIL)==false){
+		  $msg="<div class='alert alert-danger'><strong>Error! </strong> Email is not valid </div>";
+		 return $msg;
+	     }
+
+	   /* if($email_check==false){
+		  $msg="<div class='alert alert-danger'><strong>Error</strong>email not axist </div>";
+		 return $msg;
+	      }*/
+           $result = $this->getloginuser($email, $password);
+	  if($result == true){
+		  Session::init();
+		  Session::set("login",true);
+		  Session::set("username",$result->username);
+		  Session::set("phone",$result->phone);
+		  Session::set("email",$result->email);
+		 // Session::set("phone",$result->phone);
+		  Session::set("Age",$result->Age);
+		  Session::set("Gender",$result->Gender);
+		  Session::set("Date",$result->Date);
+		  Session::set("Month",$result->Month);
+		  Session::set("Permission",$result->Permission);
+		  Session::set("flat_name",$result->flat_name);
+		  Session::set("loginmsg","<div class='alert alert-success'><strong>sucess</strong>you are loggedIn </div>");
+		  header("Location: web.php");
+	  }else{
+		  $msg="<div class='alert alert-danger'><strong>data</strong> not found!</div>";
+		 return $msg;
+
+	  }
+	}
+	 public function getloginuser($email, $password){
+		  $qur="select * from flat_customer WHERE email= :email and password= :password LIMIT 1";
+          $query = $this->db->pdo->prepare($qur);
+		  $query->bindValue(':email',$email);
+		  $query->bindValue(':password',$password);
+          $query->execute();
+		  $result=$query->fetch(PDO::FETCH_OBJ);
+		  return $result;
+	   }
+   public function getUserBypass($phone){
+      $sql_qu="select * from flat_customer where phone=:phone LIMIT 1";
+		 $query = $this->db->pdo->PREPARE($sql_qu);
+		  $query->bindValue(':phone',$phone);
+          $query->execute();
+		  $result=$query->fetch(PDO::FETCH_OBJ);
+		  return $result;
+
+	}
+
+    public function userUpdate($Phone,$data){
+         $name=$data['name'];
+	   $Age=$data['Age'];
+	   $gender=$data['Gender'];
+	   $email=$data['email'];
+
+	   	if(filter_var($email,FILTER_VALIDATE_EMAIL)==false){
+		  $msg="<div class='alert alert-danger'><strong>Error</strong>email is not valid </div>";
+		 return $msg;
+	 }
+        $qur="UPDATE flat_customer SET
+		username = :username,
+		email = :email,
+		Age = :Age,
+		Gender = :Gender
+        WHERE
+		phone = :phone";
+         $query = $this->db->pdo->PREPARE($qur);
+		 $query->bindValue(':username',$name);
+		 $query->bindValue(':email',$email);
+		 $query->bindValue(':Age',$Age);
+		 $query->bindValue(':Gender',$gender);
+		 $query->bindValue(':phone',$Phone);
+         $result=$query->execute();
+		if($result==true){
+			 $msg="<div class='alert alert-success'><strong>update</strong>successfull</div>";
+
+		 return $msg;
+		 }
+		 else{
+			 $msg="<div class='alert alert-danger'><strong>sorry</strong>its's not possible</div>";
+		 return $msg;
+		 }
+	}
+
+	public function UserProfileUpdate($username,$phone,$data){
+		  $Month=$data['Month'];
+	   $flat_name=$data['flat_name'];
+	   if( $Month=='' || $flat_name==''){
+		 $msg="<div class='alert alert-danger'><strong>Error</strong>Feild must not be empty</div>";
+		 return $msg;
+       }
+	   $qur1="select * from customer_request where phone = :phone";
+			$query = $this->db->pdo->PREPARE($qur1);
+			$query->bindValue(':phone',$phone);
+			$query->execute();
+			$result2=$query->fetch(PDO::FETCH_OBJ);
+			if($result2==true){
+				  $qur1="select * from flat_customer where Month = :Month and phone = :phone";
+			$query = $this->db->pdo->PREPARE($qur1);
+			$query->bindValue(':Month','No');
+			$query->bindValue(':phone',$phone);
+			$query->execute();
+			$result1=$query->fetch(PDO::FETCH_OBJ);
+			if($result1==true){
+			$qur="UPDATE flat_customer SET
+		Month = :Month,
+		flat_name = :flat_name
+        WHERE
+		phone = :phone";
+         $query = $this->db->pdo->PREPARE($qur);
+		 $query->bindValue(':Month',$Month);
+		 $query->bindValue(':flat_name',$flat_name);
+		 $query->bindValue(':phone',$phone);
+         $result=$query->execute();
+		 if($result==true){
+				$qur="INSERT INTO customer_request (username,phone,Month,Permission,flat_name)
+          VALUES (:username,:phone,:Month,:Permission,:flat_name)";
+         $query = $this->db->pdo->PREPARE($qur);
+		 $query->bindValue(':username',$username);
+		 $query->bindValue(':phone',$phone);
+		 $query->bindValue(':Month',$Month);
+	      $query->bindValue(':Permission','No');
+		 $query->bindValue(':flat_name',$flat_name);
+         $result=$query->execute();
+		 if($result==true){
+			header("Location: web.php");
+		 }
+		 }
+		}
+		else{
+			$qur="UPDATE flat_customer SET
+		Month = :Month,
+		flat_name = :flat_name
+        WHERE
+		phone = :phone";
+         $query = $this->db->pdo->PREPARE($qur);
+		 $query->bindValue(':Month',$Month);
+		 $query->bindValue(':flat_name',$flat_name);
+		 $query->bindValue(':phone',$phone);
+         $result=$query->execute();
+			if($result==true){
+					 $qur="UPDATE customer_request SET
+		Month = :Month,
+		flat_name = :flat_name
+        WHERE
+		phone = :phone";
+         $query = $this->db->pdo->PREPARE($qur);
+		 $query->bindValue(':Month',$Month);
+		 $query->bindValue(':flat_name',$flat_name);
+		 $query->bindValue(':phone',$phone);
+         $result=$query->execute();
+			if($result==true){
+			header("Location: web.php");
+		 }
+
+			}
+		}
+			}
+			else{
+
+				$qur="UPDATE flat_customer SET
+		Month = :Month,
+		flat_name = :flat_name,
+		Permission =:Permission
+        WHERE
+		phone = :phone";
+         $query = $this->db->pdo->PREPARE($qur);
+		 $query->bindValue(':Month',$Month);
+		 $query->bindValue(':flat_name',$flat_name);
+		 $query->bindValue(':Permission','No');
+		 $query->bindValue(':phone',$phone);
+
+         $result=$query->execute();
+		 if($result==true){
+				$qur="INSERT INTO customer_request (username,phone,Month,Permission,flat_name)
+          VALUES (:username,:phone,:Month,:Permission,:flat_name)";
+         $query = $this->db->pdo->PREPARE($qur);
+		 $query->bindValue(':username',$username);
+		 $query->bindValue(':phone',$phone);
+		 $query->bindValue(':Month',$Month);
+	      $query->bindValue(':Permission','No');
+		 $query->bindValue(':flat_name',$flat_name);
+         $result=$query->execute();
+		 if($result==true){
+			header("Location: web.php");
+		 }
+		 }
+
+			}
+
+
+
+	}
+	 public function Admin_login($date){
+		   $phone=$date['phone'];
+		   $password=$date['password'];
+
+	   if( $password=='' || $phone==''){
+		 $msg="<div class='alert alert-danger'><strong>Error! </strong>Feild must not be empty</div>";
+		 return $msg;
+       }
+
+           $result = $this->getloginAdmin($phone, $password);
+	  if($result == true){
+		  Session::init();
+		  Session::set("login1",true);
+		  Session::set("name",$result->name);
+		  Session::set("password",$result->password);
+		  Session::set("phone",$result->phone);
+		  Session::set("loginmsg1","<div class='alert alert-success'><strong>Sucess! </strong>you are loggedIn </div>");
+		  header("Location: admin/index.php");
+	  }else{
+		  $msg="<div class='alert alert-danger'><strong>data </strong> not found!</div>";
+		 return $msg;
+	  }
+	}
+	 public function getloginAdmin($phone, $password){
+		  $qur="select * from admin_details WHERE phone= :phone and password = :password  LIMIT 1";
+          $query = $this->db->pdo->prepare($qur);
+		   $query->bindValue(':phone',$phone);
+		  $query->bindValue(':password',$password);
+          $query->execute();
+		  $result=$query->fetch(PDO::FETCH_OBJ);
+		  return $result;
+	   }
+
+     public function getAcceptedCustomers(){
+        $sql_qu="select * from accepted_customer ORDER BY username DESC";
+        $query = $this->db->pdo->prepare($sql_qu);
+             $query->execute();
+        $result = $query->fetchAll();
+       return $result;
+     }
+     public function getFlatCustomers(){
+        $sql_qu="select * from flat_customer ORDER BY username DESC";
+        $query = $this->db->pdo->prepare($sql_qu);
+             $query->execute();
+        $result = $query->fetchAll();
+       return $result;
+     }
+
+     public function getBuyingRequests(){
+        $sql_qu="select * from buying_request ORDER BY id DESC";
+        $query = $this->db->pdo->prepare($sql_qu);
+             $query->execute();
+        $result = $query->fetchAll();
+       return $result;
+     }
+     /*public function getPaymentInfo(){
+        $sql_qu="select * from  payment_info ORDER BY id DESC";
+        $query = $this->db->pdo->prepare($sql_qu);
+             $query->execute();
+        $result = $query->fetchAll();
+       return $result;
+     }*/
+	  public function getPaymentInfo($phone){
+        $sql_qu="select * from  payment_info where phone=:phone ORDER BY id DESC";
+        $query = $this->db->pdo->PREPARE($sql_qu);
+       $query->bindValue(':phone',$phone);
+           $query->execute();
+       $result=$query->fetchAll();
+       return $result;
+     }
+     public function getBuyingRequestsByPhone($phone){
+        $sql_qu="select * from buying_request where phone=:phone LIMIT 1";
+  		 $query = $this->db->pdo->PREPARE($sql_qu);
+  		  $query->bindValue(':phone',$phone);
+            $query->execute();
+  		  $result=$query->fetchAll();
+  		  return $result;
+
+  	}
+    public function getFlatCustomerByPhone($phone){
+       $sql_qu="select * from flat_customer where phone=:phone LIMIT 1";
+      $query = $this->db->pdo->PREPARE($sql_qu);
+       $query->bindValue(':phone',$phone);
+           $query->execute();
+       $result=$query->fetchAll();
+       return $result;
+
+   }
+    public function Update_buyingRequest($phone){
+
+      $qur="UPDATE buying_request SET
+     permission = :permission
+         WHERE
+     phone = :phone";
+          $query = $this->db->pdo->PREPARE($qur);
+      $query->bindValue(':permission','YES');
+      $query->bindValue(':phone',$phone);
+          $result=$query->execute();
+		  if($result==true){
+			   $qur="UPDATE flat_customer SET
+     permission = :permission
+         WHERE
+     phone = :phone";
+          $query = $this->db->pdo->PREPARE($qur);
+      $query->bindValue(':permission','YES');
+      $query->bindValue(':phone',$phone);
+          $result=$query->execute();
+		  if($result==true){
+		  $userdata= $this->getUserBypass($phone);
+			 if($userdata){
+				 $name=$userdata->username;
+				 $Month=$userdata->Month;
+				 $flat_name=$userdata->flat_name;
+         $isHas = $this->phonecheck_accepted_customer($phone);
+         if($isHas == false){
+            $qur="INSERT INTO accepted_customer (username,phone,Month,Permission,flat_name)
+          VALUES (:username,:phone,:Month,:Permission,:flat_name)";
+         $query = $this->db->pdo->PREPARE($qur);
+		 $query->bindValue(':username',$name);
+		 $query->bindValue(':phone',$phone);
+		 $query->bindValue(':Month',$Month);
+	      $query->bindValue(':Permission','YES');
+		 $query->bindValue(':flat_name',$flat_name);
+         $result=$query->execute();
+			if($result==true){
+			    	header("Location: buying_request.php");
+			}
+          }
+			 }
+		  }
+		  }
+        
+        }
+
+
+
+	public function getuserdata(){
+		 $sql_qu="select * from customer_request ORDER BY username DESC";
+		 $query = $this->db->pdo->prepare($sql_qu);
+         $query->execute();
+		 $result = $query->fetchAll();
+		return $result;
+	}
+   public function regitration_unpermit($userPhone){
+     $qur="UPDATE flat_customer SET
+		Permission = :Permission
+        WHERE
+		phone = :phone";
+         $query = $this->db->pdo->PREPARE($qur);
+		 $query->bindValue(':Permission','No');
+		 $query->bindValue(':phone',$userPhone);
+         $result=$query->execute();
+   }
+   public function Update_permission1($phone){
+
+		 $qur="UPDATE flat_customer SET
+		Permission = :Permission
+        WHERE
+		phone = :phone";
+         $query = $this->db->pdo->PREPARE($qur);
+		 $query->bindValue(':Permission','YES');
+		 $query->bindValue(':phone',$phone);
+         $result=$query->execute();
+		  if($result==true){
+			$qur2="DELETE FROM customer_request
+            where phone = :phone";
+			  $query = $this->db->pdo->PREPARE($qur2);
+		 $query->bindValue(':phone',$phone);
+         $result=$query->execute();
+		 }
+		 if($result==true){
+			  $userdata= $this->getUserBypass($phone);
+			 if($userdata){
+				 $name=$userdata->username;
+				 $Month=$userdata->Month;
+				 $flat_name=$userdata->flat_name;
+         $isHas = $this->phonecheck_accepted_customer($phone);
+         if($isHas == false){
+            $qur="INSERT INTO accepted_customer (username,phone,Month,Permission,flat_name)
+          VALUES (:username,:phone,:Month,:Permission,:flat_name)";
+         $query = $this->db->pdo->PREPARE($qur);
+		 $query->bindValue(':username',$name);
+		 $query->bindValue(':phone',$phone);
+		 $query->bindValue(':Month',$Month);
+	      $query->bindValue(':Permission','YES');
+		 $query->bindValue(':flat_name',$flat_name);
+         $result=$query->execute();
+			return $result;
+          }
+			 }
+
+		 }
+
+
+	}
+	  public function Delete_permission1($Phone){
+		  $qur2="DELETE FROM customer_request
+            where phone = :phone";
+			  $query = $this->db->pdo->PREPARE($qur2);
+		 $query->bindValue(':phone',$Phone);
+         $result=$query->execute();
+		 if($result==true){
+			 header("Location: customer_details.php");
+		 }
+
+	  }
+    public function Delete_accepted_customer($Phone){
+		  $qur2="DELETE FROM accepted_customer
+            where phone = :phone";
+			  $query = $this->db->pdo->PREPARE($qur2);
+		 $query->bindValue(':phone',$Phone);
+         $result=$query->execute();
+		       return $result;
+	  }
+    public function delete_regitration($Phone){
+		  $qur2="DELETE FROM flat_customer
+            where phone = :phone";
+			  $query = $this->db->pdo->PREPARE($qur2);
+		 $query->bindValue(':phone',$Phone);
+         $result=$query->execute();
+		       return $result;
+
+	  }
+    public function Delete_buying_request($id){
+      $qur2="DELETE FROM buying_request
+            where id = :id";
+			  $query = $this->db->pdo->PREPARE($qur2);
+		 $query->bindValue(':id',$id);
+         $result=$query->execute();
+		 if($result==true){
+			 /* $qur2="DELETE FROM payment_info
+            where id = :id";
+			  $query = $this->db->pdo->PREPARE($qur2);
+		 $query->bindValue(':id',$id);
+         $result=$query->execute();*/
+		 return $result;
+		 }
+		       
+    }
+
+	
+
+}
+
+?>
